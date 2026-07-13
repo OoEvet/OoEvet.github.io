@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # local design reference
 image.png
+
+# original local import (the optimized site copy lives in src/assets/photos)
+/A7C06504.JPG

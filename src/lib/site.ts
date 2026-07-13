@@ -32,8 +32,8 @@ export const copy = {
   photo: {
     title: 'Photo',
     subtitle: 'Some memories I want to cherish.',
-    notice: 'The archive is ready. Add photographs to src/assets/photos to organize them by date, place, and coordinates.',
-    slots: ['Your first photograph', 'Light and architecture', 'A moment on the way', 'Somewhere worth remembering'],
+    notice: 'A growing archive of places, details, and ordinary moments worth remembering.',
+    slots: ['Next photograph', 'A moment on the way', 'Somewhere worth remembering'],
   },
   links: {
     title: 'Links',

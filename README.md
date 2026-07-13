@@ -70,6 +70,21 @@ The generated static website is written to `dist/`.
 
 ## Editing content
 
+Do not edit `package-lock.json` manually. npm updates it automatically when
+dependencies change. Most routine website updates only involve `site.ts`, a
+Markdown post, or the global stylesheet.
+
+### Content quick reference
+
+| What to update | File or directory |
+| --- | --- |
+| Homepage introduction and Now section | `src/lib/site.ts` |
+| Navigation labels and external links | `src/lib/site.ts` |
+| Add or edit blog posts | `src/content/posts/*.md` |
+| Photo page placeholder copy | `src/lib/site.ts` |
+| Colors, typography, spacing, and responsive design | `src/styles/global.css` |
+| Page structure | `src/components/pages/*.astro` |
+
 ### Site copy and links
 
 Edit `src/lib/site.ts` to change the name, introduction, navigation copy,
@@ -97,11 +112,71 @@ The post will appear at `/blog/post-url/` after the next build.
 
 ### Photos
 
-The Photo page currently uses visual placeholders. Future photographs should
-be stored under `src/assets/photos/` and connected to structured metadata such
-as date, location, coordinates, caption, and alt text.
+Photographs are stored under `src/assets/photos/` and displayed from
+`src/components/pages/PhotoPage.astro`. Astro optimizes imported photos during
+the production build. JPG and JPEG files in this directory are discovered
+automatically.
+
+The build reads the original EXIF metadata and displays available values for:
+
+- original capture date;
+- camera make and model;
+- lens model;
+- focal length;
+- aperture;
+- shutter speed;
+- ISO.
+
+To add a photograph:
+
+1. Copy the JPG or JPEG file into `src/assets/photos/`.
+2. Add optional human-authored details to `src/lib/photo-overrides.ts`:
+
+```ts
+export const photoOverrides = {
+  'PHOTO.JPG': {
+    location: 'Kangaroo Island',
+    caption: 'An optional caption.',
+    alt: 'A useful description of the photograph.',
+  },
+}
+```
+
+There is no need to import each image into `PhotoPage.astro`. The gallery sorts
+photos by EXIF capture time, newest first, and hides metadata fields that are
+missing. GPS coordinates are intentionally not extracted or published. Use a
+reliable location when available, do not invent coordinates, and always provide
+meaningful alt text in the override file.
 
 `image.png` is a local design reference and is intentionally excluded from Git.
+
+## Routine update workflow
+
+1. Edit the relevant file and save it.
+2. Start the local website if you want to preview the change:
+
+   ```sh
+   npm run astro -- dev --background
+   ```
+
+3. Open the local URL printed by Astro. It is usually
+   `http://localhost:4321`, but Astro uses the next available port when needed.
+4. Stop the local website after checking the result:
+
+   ```sh
+   npm run astro -- dev stop
+   ```
+
+5. Commit and push the update:
+
+   ```sh
+   git add .
+   git commit -m "content: update website"
+   git push
+   ```
+
+GitHub Actions will rebuild and publish the website automatically. Check the
+repository's **Actions** tab if an update does not appear after a few minutes.
 
 ## Deployment
 

@@ -360,6 +360,19 @@ button:focus-visible {
   font-size: 0.66rem;
 }
 
+.photo-entry .photo-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 400ms ease;
+}
+
+.photo-entry:hover .photo-frame img {
+  transform: scale(1.015);
+}
+
 .photo-caption {
   display: flex;
   justify-content: space-between;
@@ -368,6 +381,38 @@ button:focus-visible {
   color: var(--muted);
   font-family: var(--mono);
   font-size: 0.72rem;
+}
+
+.photo-exif {
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.55;
+}
+
+.photo-gear,
+.photo-settings,
+.photo-note {
+  margin: 0;
+}
+
+.photo-gear {
+  color: var(--ink);
+}
+
+.photo-settings {
+  margin-top: 4px;
+  color: var(--faint);
+}
+
+.photo-note {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
 }
 
 .link-groups {
