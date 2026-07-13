@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { copy } from '../../lib/site';
+const t = copy;
+---
+
+<BaseLayout section="links" title={t.links.title} description={t.links.subtitle}>
+  <section class="page">
+    <header class="page-heading">
+      <h1>{t.links.title}</h1>
+      <p>{t.links.subtitle}</p>
+    </header>
+    <div class="link-groups">
+      {t.links.groups.map((group) => (
+        <section class="link-group">
+          <h2>{group.title}</h2>
+          <ul class="link-list">
+            {group.items.map((item) => (
+              <li>
+                <a href={item.href} target="_blank" rel="noreferrer">
+                  <span>{item.label} <span aria-hidden="true">↗</span></span>
+                  <span class="link-note">{item.note}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

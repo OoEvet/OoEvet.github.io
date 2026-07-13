@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { copy } from '../../lib/site';
+const t = copy;
+---
+
+<BaseLayout section="home">
+  <section class="page">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">{t.home.eyebrow}</p>
+        <h1>{t.home.title}</h1>
+        <p class="hero-intro">{t.home.intro}</p>
+      </div>
+      <p class="hero-note">{t.home.note}</p>
+    </div>
+
+    <div class="home-sections">
+      <section class="now-card">
+        <span class="section-label">{t.home.nowTitle}</span>
+        <p>{t.home.nowBody}</p>
+      </section>
+      <section>
+        <span class="section-label">{t.home.selectedTitle}</span>
+        <ul class="index-list">
+          {t.home.selectedLinks.map((item) => (
+            <li><a href={item.href}><span>{item.label}</span><span class="meta">{item.meta}</span></a></li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  </section>
+</BaseLayout>

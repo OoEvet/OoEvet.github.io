@@ -1,0 +1,74 @@
+---
+import '../styles/global.css';
+import { copy, SITE, type Section } from '../lib/site';
+
+interface Props {
+  section: Section;
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { section, title, description, image } = Astro.props;
+const t = copy;
+const pageTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — Notes & observations`;
+const pageDescription = description ?? t.siteDescription;
+const canonical = new URL(Astro.url.pathname, SITE.url);
+const navItems: { key: Section; path: string }[] = [
+  { key: 'home', path: '/' },
+  { key: 'blog', path: '/blog/' },
+  { key: 'photo', path: '/photo/' },
+  { key: 'links', path: '/links/' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content="#f5f1e7" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    {image && <meta property="og:image" content={new URL(image, SITE.url)} />}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="wordmark" href="/" aria-label={`${SITE.name} — ${t.nav.home}`}>
+          <span class="wordmark-dot" aria-hidden="true"></span>
+          {SITE.name}
+        </a>
+        <nav class="main-nav" aria-label="Primary navigation">
+          {navItems.map((item) => (
+            <a
+              href={item.path}
+              aria-current={section === item.key ? 'page' : undefined}
+            >
+              {t.nav[item.key]}
+            </a>
+          ))}
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <span>© {new Date().getFullYear()} {SITE.name}</span>
+        <span>{t.footer}</span>
+      </footer>
+    </div>
+  </body>
+</html>

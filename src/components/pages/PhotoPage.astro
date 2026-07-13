@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { copy } from '../../lib/site';
+const t = copy;
+---
+
+<BaseLayout section="photo" title={t.photo.title} description={t.photo.subtitle}>
+  <section class="page">
+    <header class="page-heading">
+      <h1>{t.photo.title}</h1>
+      <p>{t.photo.subtitle}</p>
+    </header>
+    <p class="notice">{t.photo.notice}</p>
+    <div class="photo-grid">
+      {t.photo.slots.map((slot, index) => (
+        <article class="photo-slot">
+          <div class="photo-frame" aria-label={slot}><span>{String(index + 1).padStart(2, '0')}</span></div>
+          <div class="photo-caption"><span>{slot}</span><span>—</span></div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
