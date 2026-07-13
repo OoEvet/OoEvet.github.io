@@ -11,9 +11,9 @@ Production URL: <https://ooevet.github.io>
 - Minimal editorial design based on warm paper tones, soft ambient light, and
   monospace metadata.
 - English-only content and routes.
-- Markdown blog posts managed through a typed Astro Content Collection.
+- Markdown blog posts and photographs managed through typed Astro Content Collections.
 - A sample article and statically generated article route.
-- A prepared photo archive layout with honest placeholders for future photos.
+- A responsive photo archive with automatic EXIF metadata and optimized images.
 - Site metadata, canonical URLs, Open Graph text metadata, and accessible
   navigation states.
 - Fully static output with no application server required.
@@ -25,6 +25,8 @@ Production URL: <https://ooevet.github.io>
 src/
 ├── components/pages/     Page-level components
 ├── content/posts/        Markdown blog posts
+├── content/photos/       Markdown photograph entries
+├── assets/photos/        Original photograph files
 ├── layouts/              Shared HTML shell and navigation
 ├── lib/site.ts           Site copy, links, and global settings
 ├── pages/                Astro routes
@@ -81,7 +83,7 @@ Markdown post, or the global stylesheet.
 | Homepage introduction and Now section | `src/lib/site.ts` |
 | Navigation labels and external links | `src/lib/site.ts` |
 | Add or edit blog posts | `src/content/posts/*.md` |
-| Photo page placeholder copy | `src/lib/site.ts` |
+| Add or edit photographs | `src/content/photos/*.md` |
 | Colors, typography, spacing, and responsive design | `src/styles/global.css` |
 | Page structure | `src/components/pages/*.astro` |
 
@@ -112,10 +114,10 @@ The post will appear at `/blog/post-url/` after the next build.
 
 ### Photos
 
-Photographs are stored under `src/assets/photos/` and displayed from
-`src/components/pages/PhotoPage.astro`. Astro optimizes imported photos during
-the production build. JPG and JPEG files in this directory are discovered
-automatically.
+Original photographs are stored under `src/assets/photos/`. Every published
+photo must have a matching Markdown entry under `src/content/photos/`. Astro
+validates the Markdown metadata, imports the referenced image, and optimizes it
+during the production build.
 
 The build reads the original EXIF metadata and displays available values for:
 
@@ -130,23 +132,31 @@ The build reads the original EXIF metadata and displays available values for:
 To add a photograph:
 
 1. Copy the JPG or JPEG file into `src/assets/photos/`.
-2. Add optional human-authored details to `src/lib/photo-overrides.ts`:
+2. Create a Markdown entry in `src/content/photos/`:
 
-```ts
-export const photoOverrides = {
-  'PHOTO.JPG': {
-    location: 'Kangaroo Island',
-    caption: 'An optional caption.',
-    alt: 'A useful description of the photograph.',
-  },
-}
+```md
+---
+title: Photograph title
+image: ../../assets/photos/PHOTO.JPG
+location: Kangaroo Island
+alt: A useful description of the photograph.
+caption: An optional visible caption.
+tags:
+  - travel
+featured: false
+draft: false
+---
 ```
 
-There is no need to import each image into `PhotoPage.astro`. The gallery sorts
-photos by EXIF capture time, newest first, and hides metadata fields that are
-missing. GPS coordinates are intentionally not extracted or published. Use a
-reliable location when available, do not invent coordinates, and always provide
-meaningful alt text in the override file.
+The `image` and `alt` fields are required. The build fails if the image does not
+exist or required metadata is missing. Set `draft: true` to keep an entry out of
+the published gallery. The gallery sorts published photos by EXIF capture time,
+newest first, and hides metadata fields that are missing.
+
+EXIF values remain automatic; do not duplicate camera settings in Markdown.
+GPS coordinates are intentionally not extracted or published. Use a reliable
+location when available, do not invent coordinates, and always provide
+meaningful alt text.
 
 `image.png` is a local design reference and is intentionally excluded from Git.
 

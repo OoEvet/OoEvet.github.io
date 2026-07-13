@@ -33,7 +33,6 @@ export const copy = {
     title: 'Photo',
     subtitle: 'Some memories I want to cherish.',
     notice: 'A growing archive of places, details, and ordinary moments worth remembering.',
-    slots: ['Next photograph', 'A moment on the way', 'Somewhere worth remembering'],
   },
   links: {
     title: 'Links',

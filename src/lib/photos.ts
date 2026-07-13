@@ -1,7 +1,7 @@
 import type { ImageMetadata } from 'astro';
+import { getCollection } from 'astro:content';
 import exifr from 'exifr';
 import { resolve } from 'node:path';
-import { photoOverrides } from './photo-overrides';
 
 interface ImageModule {
   default: ImageMetadata;
@@ -23,6 +23,7 @@ interface ExifMetadata {
 
 export interface Photo {
   image: ImageMetadata;
+  title: string;
   filename: string;
   date?: string;
   timestamp: number;
@@ -32,11 +33,16 @@ export interface Photo {
   camera?: string;
   lens?: string;
   settings: string[];
+  tags: string[];
 }
 
 const imageModules = import.meta.glob<ImageModule>(
   '/src/assets/photos/*.{jpg,jpeg,JPG,JPEG}',
   { eager: true },
+);
+
+const sourcePathsByImageSrc = new Map(
+  Object.entries(imageModules).map(([sourcePath, imageModule]) => [imageModule.default.src, sourcePath]),
 );
 
 function cleanText(value: unknown) {
@@ -69,8 +75,14 @@ function formatDate(value?: Date) {
 }
 
 export async function getPhotos(): Promise<Photo[]> {
+  const entries = await getCollection('photos', ({ data }) => !data.draft);
   const photos = await Promise.all(
-    Object.entries(imageModules).map(async ([sourcePath, imageModule]) => {
+    entries.map(async (entry) => {
+      const sourcePath = sourcePathsByImageSrc.get(entry.data.image.src);
+      if (!sourcePath) {
+        throw new Error(`Unable to resolve the source image for photo entry "${entry.id}".`);
+      }
+
       const filename = sourcePath.split('/').pop() ?? sourcePath;
       const filePath = resolve('src/assets/photos', filename);
       const fields = [
@@ -94,7 +106,6 @@ export async function getPhotos(): Promise<Photo[]> {
         exif = undefined;
       }
 
-      const override = photoOverrides[filename] ?? {};
       const takenAt = exif?.DateTimeOriginal ?? exif?.CreateDate;
       const date = formatDate(takenAt);
       const make = cleanText(exif?.Make);
@@ -113,16 +124,18 @@ export async function getPhotos(): Promise<Photo[]> {
       ].filter((value): value is string => Boolean(value));
 
       return {
-        image: imageModule.default,
+        image: entry.data.image,
+        title: entry.data.title,
         filename,
         date,
         timestamp: takenAt?.valueOf() ?? 0,
-        location: override.location,
-        caption: override.caption ?? cleanText(exif?.ImageDescription),
-        alt: override.alt ?? `Personal photograph${date ? ` taken on ${date}` : ''}.`,
+        location: entry.data.location,
+        caption: entry.data.caption ?? cleanText(exif?.ImageDescription),
+        alt: entry.data.alt,
         camera: formatCamera(make, model),
         lens,
         settings,
+        tags: entry.data.tags,
       };
     }),
   );
