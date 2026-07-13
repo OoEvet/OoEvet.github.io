@@ -26,5 +26,10 @@ pnpm-debug.log*
 # local design reference
 image.png
 
-# original local import (the optimized site copy lives in src/assets/photos)
-/A7C06504.JPG
+# Ignore JPG/JPEG files everywhere by default
+*.[jJ][pP][gG]
+*.[jJ][pP][eE][gG]
+
+# Keep website image assets tracked
+!/src/assets/**/*.[jJ][pP][gG]
+!/src/assets/**/*.[jJ][pP][eE][gG]
